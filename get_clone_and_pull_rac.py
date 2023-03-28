@@ -73,8 +73,11 @@ class GitRepoCloneAndPull:
 
     def clone_repo(self, repo, repo_dir):
         print(f"Cloning {repo.name}")
+        clone_url = repo.clone_url.replace(
+            "https://", f"https://{self.git_username}:{self.git_password}@"
+        )
         Repo.clone_from(
-            repo.clone_url,
+            clone_url,
             repo_dir,
             env={
                 "GIT_HTTP_USERNAME": self.git_username,
