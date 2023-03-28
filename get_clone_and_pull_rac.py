@@ -51,6 +51,8 @@ class GitRepoCloneAndPull:
         self.github_org = github_org
         self.git_username = git_username
         self.git_password = git_password
+        os.system(f'git config --global user.name "{self.git_username}"')
+        os.system(f'git config --global user.password "{self.git_password}"')
         self.repo_list = self.list_all_repos()
 
     @staticmethod
@@ -138,7 +140,10 @@ class GitRepoCloneAndPull:
 if __name__ == "__main__":
     settings = yaml.load(open("gitmeta.yml"), Loader=yaml.FullLoader)
     g = GitRepoCloneAndPull(
-        settings["github_access_token"], settings["github_organization"]
+        settings["github_access_token"],
+        settings["github_organization"],
+        settings["git_username"],
+        settings["git_password"],
     )
     for project in settings["projects"]:
         g.pull_to_dir(settings["git_repo_dir"], project["git_prefix"])
