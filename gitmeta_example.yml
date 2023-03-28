@@ -1,0 +1,13 @@
+# Org github access token. Note that you explcitely need to enable creating these tokens in your github org
+github_access_token: github_verylongstring
+# Org name as found for example in your github URLs
+github_organization: Your-Cool-Org
+# Repocache can grow quite big due to the git clone commands
+git_repo_dir: d:\\drive\\aws\\gitCommitMeta\\repocache
+projects:
+  - name: "Some fancy name"
+    # The prefix can be any part of a repo name and will group all repos with that prefix
+    git_prefix: "github_repo_prefix"
+  - name: "Another fancy name"
+    # The prefix can be any part of a repo name and will group all repos with that prefix
+    git_prefix: "another_github_repo_prefix"

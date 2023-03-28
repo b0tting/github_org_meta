@@ -1,0 +1,46 @@
+{% extends "index.html" %}
+{% block content %}
+                    <div class="row">
+                        <div class="col-md-12 col-lg-12">
+                            <div class="card">
+                                <div class="card-header">Stripe Table</div>
+                                <div class="card-body">
+                                    <p class="card-title">Project info for configured <a href="https://github.com/orgs/{{ project_info.github_org }}/repositories">RAC</a></p>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Project</th>
+                                                    <th>Github link</th>
+                                                    <th>Last refresh</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for project in project_info.projects %}
+                                                <tr>
+                                                    <th scope="row">{{ project.name }}</th>
+                                                    <td><a href="https://github.com/orgs/{{ project_info.github_org }}/repositories?q={{ project.git_prefix }}&type=all&language=&sort=">{{ project.git_prefix }}</a></td>
+                                                    <td class="timestamp">{{ project.last_updated }}</td>
+                                                    <td><button class="refresh" data-project="{{ project.git_prefix }}">Refresh</button></td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+<script>
+    $("button.refresh").on("click", function() {
+        const project = $(this).data("project")
+        $.get("/refresh_project/" + project, function (data, status) {
+            if(data.update_date) {
+                $(this).parent().parent().find("td.timestamp").text(data.update_date)
+            }
+        })
+    })
+
+</script>
+{% endblock %}

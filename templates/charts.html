@@ -1,0 +1,154 @@
+{% extends "index.html" %}
+{% block content %}
+                    <div class="row">
+                         <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">Commits per week number</div>
+                                <div class="card-body">
+                                    <div class="inline-code">
+                                        <div>
+                                          <canvas id="commits_week"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                         <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">Commits total</div>
+                                <div class="card-body">
+                                    <div class="inline-code">
+                                        <div>
+                                          <canvas id="commits_total"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                         <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">Commit hours</div>
+                                <div class="card-body">
+                                    <div class="inline-code">
+                                        <div>
+                                          <canvas id="commits_hours"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+<script>
+    const project_name = "{{ project }}"
+    var canvas_map = {}
+    function show_commit_times() {
+        $.get("/get_commit_times/" + project_name, function (data, status) {
+            const ctx = document.getElementById("commits_hours");
+            console.log(data)
+            if (!canvas_map.commits_week) {
+                canvas_map.commits_week = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.labels,
+                        datasets: data.dataset
+                    },
+                    options: {
+                        scales: {
+                            x: {
+                                stacked: true
+                            },
+                            y: {
+                                beginAtZero: true,
+                                stacked: true
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Totaal commits per team per uur'
+                        }
+
+                    }
+                });
+            }
+        })
+        return this
+    }
+
+    function show_commit_weeks() {
+        $.get("/get_commit_weeks/" + project_name, function (data, status) {
+            const ctx = document.getElementById("commits_week");
+            let data_set = data.data
+            let week_labels = data.labels
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: week_labels,
+                    datasets: data_set
+                },
+                options: {
+                    scales: {
+                        x: {
+                            stacked: true
+                        },
+                        y: {
+                            beginAtZero: true,
+                            stacked: true
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Totaal commits per team per uur'
+                      },
+                    plugins: {
+                      legend: {
+                        position: 'right',
+                      },
+                    }
+                }
+            });
+        })
+        return this
+    }
+
+    function show_commit_number() {
+        $.get("/get_commit_number/" + project_name, function (data, status) {
+            const ctx = document.getElementById("commits_total");
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(row => row.name),
+                    datasets: [
+                        {
+                            label: "Commits",
+                            data: data.map(row => row.number_commits)
+                        }
+
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    indexAxis: 'y',
+                    plugins: {
+                      legend: {
+                        position: 'right',
+                      },
+                      title: {
+                        display: true,
+                        text: 'Totaal commits per team'
+                      }
+                    }
+                }
+            });
+        })
+        return this
+    }
+    show_commit_times()
+    show_commit_weeks()
+    show_commit_number()
+</script>
+{% endblock %}
