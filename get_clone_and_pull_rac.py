@@ -46,13 +46,9 @@ class GitProjectInfo:
 class GitRepoCloneAndPull:
     LAST_UPDATE_FILE = ".last_update"
 
-    def __init__(self, github_access_token, github_org, git_username, git_password):
+    def __init__(self, github_access_token, github_org):
         self.github_access_token = github_access_token
         self.github_org = github_org
-        self.git_username = git_username
-        self.git_password = git_password
-        os.system(f'git config --global user.name "{self.git_username}"')
-        os.system(f'git config --global user.password "{self.git_password}"')
         self.repo_list = self.list_all_repos()
 
     @staticmethod
@@ -75,14 +71,11 @@ class GitRepoCloneAndPull:
 
     def clone_repo(self, repo, repo_dir):
         print(f"Cloning {repo.name}")
-        Repo.clone_from(
-            repo.clone_url,
-            repo_dir,
-            env={
-                "GIT_HTTP_USERNAME": self.git_username,
-                "GIT_HTTP_PASSWORD": self.git_password,
-            },
+        clone_url = repo.clone_url.replace(
+            "https://", f"https://{self.github_org}:{self.github_access_token}@"
         )
+        print(clone_url)
+        Repo.clone_from(clone_url, repo_dir)
 
     def pull_to_dir(self, repo_basedir, repo_filter):
         repos_dir = os.path.join(repo_basedir, repo_filter)
@@ -139,8 +132,6 @@ if __name__ == "__main__":
     g = GitRepoCloneAndPull(
         settings["github_access_token"],
         settings["github_organization"],
-        settings["git_username"],
-        settings["git_password"],
     )
     for project in settings["projects"]:
         g.pull_to_dir(settings["git_repo_dir"], project["git_prefix"])

@@ -4,8 +4,6 @@ github_access_token: github_verylongstring
 github_organization: Your-Cool-Org
 # Repocache can grow quite big due to the git clone commands
 git_repo_dir: d:\\drive\\aws\\gitCommitMeta\\repocache
-git_username: sorry_for_the_spam
-git_password: and_sorry_for_the_password
 projects:
   - name: "Some fancy name"
     # The prefix can be any part of a repo name and will group all repos with that prefix
