@@ -46,9 +46,11 @@ class GitProjectInfo:
 class GitRepoCloneAndPull:
     LAST_UPDATE_FILE = ".last_update"
 
-    def __init__(self, github_access_token, github_org):
+    def __init__(self, github_access_token, github_org, git_username, git_password):
         self.github_access_token = github_access_token
         self.github_org = github_org
+        self.git_username = git_username
+        self.git_password = git_password
         self.repo_list = self.list_all_repos()
 
     @staticmethod
@@ -71,7 +73,14 @@ class GitRepoCloneAndPull:
 
     def clone_repo(self, repo, repo_dir):
         print(f"Cloning {repo.name}")
-        Repo.clone_from(repo.clone_url, repo_dir)
+        Repo.clone_from(
+            repo.clone_url,
+            repo_dir,
+            env={
+                "GIT_HTTP_USERNAME": self.git_username,
+                "GIT_HTTP_PASSWORD": self.git_password,
+            },
+        )
 
     def pull_to_dir(self, repo_basedir, repo_filter):
         repos_dir = os.path.join(repo_basedir, repo_filter)

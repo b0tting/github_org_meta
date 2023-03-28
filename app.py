@@ -68,7 +68,10 @@ def refresh_project(project):
         if project not in project_names:
             raise Exception(f"Error: project {project} not in project list")
         grcap = GitRepoCloneAndPull(
-            settings["github_access_token"], settings["github_organization"]
+            settings["github_access_token"],
+            settings["github_organization"],
+            settings["git_username"],
+            settings["git_password"],
         )
         update_timestamp = grcap.pull_to_dir(settings["git_repo_dir"], project)
         update_date = gpi.convert_timestamp(update_timestamp)
