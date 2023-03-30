@@ -61,6 +61,34 @@ def get_project_info():
     )
 
 
+@app.route("/repo_details")
+def get_repo_details():
+    return render_template(
+        "repo_details.html",
+        repos=settings["projects"],
+        project_info=gpi.get_all_project_info(),
+    )
+
+
+@app.route("/get_repos/<string:project>")
+def list_repos(project):
+    return jsonify(gpi.get_repos_for_project(project))
+
+
+@app.route("/get_commit_weeks/<string:project>/<string:repo>")
+def list_repo_commits(project):
+    ignore_cache = request.args.get("ignore_cache", False)
+    result = gct.get_repo_commits_over_weeks(project, repo, ignore_cache)
+    chartjs_datasets = [
+        {"label": repo["name"], "data": repo["week_brackets"]} for repo in result
+    ]
+    labels = set([label for repo in result for label in repo["week_brackets"].keys()])
+    labels = list(labels)
+    labels.sort(key=lambda x: int(x))
+    result = {"data": chartjs_datasets, "labels": labels}
+    return jsonify(result)
+
+
 @app.route("/refresh_project/<string:project>")
 def refresh_project(project):
     try:

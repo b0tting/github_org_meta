@@ -46,6 +46,31 @@
 <script>
     const project_name = "{{ project }}"
     var canvas_map = {}
+
+
+
+    function handle_legend_click(e, legendItem, legend) {
+       const index = legendItem.datasetIndex;
+       const ci = legend.chart;
+       for (let i = 0; i < ci.data.datasets.length; i++) {
+            ci.hide(i)
+        }
+       if(ci.singleindex){
+            if(!legendItem.hidden) {
+                for (let i = 0; i < ci.data.datasets.length; i++) {
+                    ci.show(i)
+                }
+                ci.update("none")
+                ci.singleindex = false
+            } else {
+                ci.show(index)
+            }
+       } else {
+            ci.show(index)
+            ci.singleindex = true
+       }
+    }
+
     function show_commit_times() {
         $.get("/get_commit_times/" + project_name, function (data, status) {
             const ctx = document.getElementById("commits_hours");
@@ -58,6 +83,9 @@
                         datasets: data.dataset
                     },
                     options: {
+                        animations: false,
+                        responsive: true,
+                        maintainAspectRatio: true,
                         scales: {
                             x: {
                                 stacked: true
@@ -70,8 +98,12 @@
                         title: {
                             display: true,
                             text: 'Totaal commits per team per uur'
+                        },
+                        plugins: {
+                            legend: {
+                                onClick: handle_legend_click
+                            }
                         }
-
                     }
                 });
             }
@@ -91,9 +123,12 @@
                     datasets: data_set
                 },
                 options: {
+                    animations: false,
+                    responsive: true,
+                    maintainAspectRatio: true,
                     scales: {
                         x: {
-                            stacked: true
+                            stacked: true,
                         },
                         y: {
                             beginAtZero: true,
@@ -107,6 +142,7 @@
                     plugins: {
                       legend: {
                         position: 'right',
+                        onClick: handle_legend_click
                       },
                     }
                 }
@@ -135,7 +171,7 @@
                     indexAxis: 'y',
                     plugins: {
                       legend: {
-                        position: 'right',
+                        position: 'right'
                       },
                       title: {
                         display: true,

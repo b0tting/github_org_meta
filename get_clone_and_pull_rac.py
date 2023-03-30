@@ -74,7 +74,6 @@ class GitRepoCloneAndPull:
         clone_url = repo.clone_url.replace(
             "https://", f"https://{self.github_org}:{self.github_access_token}@"
         )
-        print(clone_url)
         Repo.clone_from(clone_url, repo_dir)
 
     def pull_to_dir(self, repo_basedir, repo_filter):
