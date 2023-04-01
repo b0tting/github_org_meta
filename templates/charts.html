@@ -3,6 +3,37 @@
                     <div class="row">
                          <div class="col-md-12">
                             <div class="card">
+                                <div class="card-header">Tags</div>
+                                <div class="card-body">
+                                    <div class="inline-code">
+                                        <div>
+                                            <table id="tagged_projects" class="datatable table table-striped">
+                                                <thead>
+                                                <tr>
+                                                    <th>Project</th>
+                                                    <th>Tag</th>
+                                                    <th>Datum</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for project in tags %}
+                                                <tr>
+                                                        <td>{{ project.name }}</td>
+                                                        <td>{{ project.tag }}</td>
+                                                        <td>{{ project.date }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                        </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                         <div class="col-md-12">
+                            <div class="card">
                                 <div class="card-header">Commits per week number</div>
                                 <div class="card-body">
                                     <div class="inline-code">
@@ -46,8 +77,6 @@
 <script>
     const project_name = "{{ project }}"
     var canvas_map = {}
-
-
 
     function handle_legend_click(e, legendItem, legend) {
        const index = legendItem.datasetIndex;
@@ -186,5 +215,10 @@
     show_commit_times()
     show_commit_weeks()
     show_commit_number()
+
+    let table = $('#tagged_projects').DataTable({
+        "order": [[ 2, "desc" ]],
+        "dom": 'frtip'
+    });
 </script>
 {% endblock %}

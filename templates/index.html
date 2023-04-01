@@ -16,10 +16,14 @@
     <link href="/assets/vendor/fontawesome/css/solid.min.css" rel="stylesheet">
     <link href="/assets/vendor/fontawesome/css/brands.min.css" rel="stylesheet">
     <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/datatables.min.css" rel="stylesheet">
     <link href="/assets/css/master.css" rel="stylesheet">
+    <link href="/assets/css/gitcommitmeta.css" rel="stylesheet">
+
     <link href="/assets/vendor/flagiconcss/css/flag-icon.min.css" rel="stylesheet">
     <script src="/assets/vendor/jquery/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/assets/js/chart.js"></script>
+    <script src="/assets/js/datatables.min.js"></script>
 </head>
 
 <body>
@@ -34,7 +38,7 @@
                     <ul class="list-unstyled" id="authmenu">
                         {% for project in projects %}
                         <li>
-                            <a href="/project/{{ project.git_prefix }}"><i class="fas"></i><nobr> {{ project.name }}</nobr></a>
+                            <a href="/project/{{ project.name }}"><i class="fas"></i><nobr> {{ project.label }}</nobr></a>
                         </li>
                         {% endfor %}
                     </ul>

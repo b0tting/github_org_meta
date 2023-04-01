@@ -1,7 +1,6 @@
 import datetime
 import os.path
-import shutil
-import time
+import re
 
 import git
 import yaml
@@ -22,15 +21,21 @@ class GitProjectInfo:
         else:
             return "Never"
 
+    def get_project_info(self, project):
+        for project_info in self.projects:
+            if project_info["name"] == project:
+                return project_info
+        return None
+
     def get_all_project_info(self):
         result = {"github_org": self.github_org, "projects": ""}
         project_list = []
         for project in self.projects:
-            update_timestamp = self.get_updated_time(project["git_prefix"])
+            update_timestamp = self.get_updated_time(project["name"])
             project_list.append(
                 {
                     "name": project["name"],
-                    "git_prefix": project["git_prefix"],
+                    "label": project["label"],
                     "last_updated": self.convert_timestamp(update_timestamp),
                 }
             )
@@ -41,6 +46,11 @@ class GitProjectInfo:
         return GitRepoCloneAndPull.get_last_updated_time(
             os.path.join(self.basedir, project)
         )
+
+    def get_unmatched_repos(self, gcap):
+        repo_expressions = [project["expression"] for project in self.projects]
+        repo_list = gcap.unmatched_repos(repo_expressions)
+        return repo_list
 
 
 class GitRepoCloneAndPull:
@@ -76,22 +86,36 @@ class GitRepoCloneAndPull:
         )
         Repo.clone_from(clone_url, repo_dir)
 
-    def pull_to_dir(self, repo_basedir, repo_filter):
-        repos_dir = os.path.join(repo_basedir, repo_filter)
-        if not repo_filter or len(repo_filter) < 3:
+    def unmatched_repos(self, repo_name_expression_list):
+        result = []
+        for repo in self.repo_list:
+            matched = False
+            for repo_name_expression in repo_name_expression_list:
+                repo_expression = re.compile(repo_name_expression)
+                if repo_expression.match(repo.name):
+                    matched = True
+                    break
+            if not matched:
+                result.append({"name": repo.name, "clone_url": repo.clone_url})
+        return result
+
+    def pull_to_dir(self, repo_basedir, project, repo_name_expression):
+        print(f"Now pulling and cloning {project}")
+        repos_dir = os.path.join(repo_basedir, project)
+        if not repo_name_expression or len(repo_name_expression) < 3:
             raise ValueError(
-                "A filter is required before pulling the repos. The filter should be at least 3 characters long."
+                "A filter expression is required before pulling the repos. The filter should be at least 3 characters long."
             )
         if os.path.exists(repos_dir):
             print(f"Pulling repositories into {repos_dir}")
+        repo_regex = re.compile(repo_name_expression)
         filtered_repo_list = [
-            repo for repo in self.repo_list if repo_filter in repo.name
+            repo for repo in self.repo_list if repo_regex.match(repo.name)
         ]
         print(f"Found {len(filtered_repo_list)} repos to pull or clone")
         for repo_meta in filtered_repo_list:
             repo_dir = os.path.join(repos_dir, repo_meta.name)
             if os.path.exists(repo_dir):
-                repo = None
                 try:
                     repo = Repo(repo_dir)
                     self.pull_repo(repo, repo_meta, repo_dir)

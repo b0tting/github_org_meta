@@ -1,3 +1,5 @@
+import traceback
+
 import yaml
 from flask import Flask, jsonify, render_template, request
 
@@ -8,16 +10,21 @@ app = Flask(__name__, static_url_path="/assets", static_folder="assets")
 settings = yaml.load(open("gitmeta.yml"), Loader=yaml.FullLoader)
 for key, value in settings.items():
     app.config[key] = value
-gct = GitCommitTimes(app.config["git_repo_dir"], fetch=False)
+gct = GitCommitTimes(app.config["git_repo_dir"])
 gpi = GitProjectInfo(
     settings["projects"], app.config["git_repo_dir"], app.config["github_organization"]
+)
+grcap = GitRepoCloneAndPull(
+    settings["github_access_token"],
+    settings["github_organization"],
 )
 
 
 @app.route("/project/<string:project>")
 def get_project_page(project):
+    tags = gct.get_tagged_state(project)
     return render_template(
-        "charts.html", project=project, projects=settings["projects"]
+        "charts.html", project=project, projects=settings["projects"], tags=tags
     )
 
 
@@ -54,10 +61,13 @@ def get_commit_number(project):
 
 @app.route("/get_project_info")
 def get_project_info():
+    project_infos = gpi.projects
+    project_expressions = [project["expression"] for project in project_infos]
     return render_template(
         "project_info.html",
         projects=settings["projects"],
         project_info=gpi.get_all_project_info(),
+        unmatched=grcap.unmatched_repos(project_expressions)
     )
 
 
@@ -70,6 +80,13 @@ def get_repo_details():
     )
 
 
+@app.route("/get_unmatched_repos")
+def get_unmatched_repos():
+    projects = gpi.projects
+    project_expressions = [project["expression"] for project in projects]
+    return grcap.unmatched_repos(project_expressions)
+
+
 @app.route("/get_repos/<string:project>")
 def list_repos(project):
     return jsonify(gpi.get_repos_for_project(project))
@@ -77,33 +94,20 @@ def list_repos(project):
 
 @app.route("/get_commit_weeks/<string:project>/<string:repo>")
 def list_repo_commits(project):
-    ignore_cache = request.args.get("ignore_cache", False)
-    result = gct.get_repo_commits_over_weeks(project, repo, ignore_cache)
-    chartjs_datasets = [
-        {"label": repo["name"], "data": repo["week_brackets"]} for repo in result
-    ]
-    labels = set([label for repo in result for label in repo["week_brackets"].keys()])
-    labels = list(labels)
-    labels.sort(key=lambda x: int(x))
-    result = {"data": chartjs_datasets, "labels": labels}
-    return jsonify(result)
+    raise NotImplementedError
 
 
 @app.route("/refresh_project/<string:project>")
 def refresh_project(project):
     try:
-        project_names = [project["git_prefix"] for project in settings["projects"]]
-        if project not in project_names:
+        project_info = gpi.get_project_info(project)
+        if not project_info:
             raise Exception(f"Error: project {project} not in project list")
-        grcap = GitRepoCloneAndPull(
-            settings["github_access_token"],
-            settings["github_organization"],
-        )
-        update_timestamp = grcap.pull_to_dir(settings["git_repo_dir"], project)
+        update_timestamp = grcap.pull_to_dir(settings["git_repo_dir"], project_info["name"], project_info["expression"])
         update_date = gpi.convert_timestamp(update_timestamp)
-        return f"{'result': 'success', 'update_date': '{update_date}'}"
+        return {"result": "success", "update_date": update_date}
     except Exception as e:
-        return "{'result': 'failed', 'error': '" + str(e) + "'}"
+        return {"result": "failed", "error": str(e)}, 500
 
 
 # @app.route("/get_commit_number")

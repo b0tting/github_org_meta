@@ -3,11 +3,11 @@
                     <div class="row">
                         <div class="col-md-12 col-lg-12">
                             <div class="card">
-                                <div class="card-header">Stripe Table</div>
+                                <div class="card-header">Project info</div>
                                 <div class="card-body">
                                     <p class="card-title">Project info for configured <a href="https://github.com/orgs/{{ project_info.github_org }}/repositories">RAC</a></p>
                                     <div class="table-responsive">
-                                        <table class="table table-striped">
+                                        <table class="datatable table table-striped">
                                             <thead>
                                                 <tr>
                                                     <th>Project</th>
@@ -19,10 +19,10 @@
                                             <tbody>
                                             {% for project in project_info.projects %}
                                                 <tr>
-                                                    <th scope="row">{{ project.name }}</th>
-                                                    <td><a href="https://github.com/orgs/{{ project_info.github_org }}/repositories?q={{ project.git_prefix }}&type=all&language=&sort=">{{ project.git_prefix }}</a></td>
+                                                    <th scope="row">{{ project.label }}</th>
+                                                    <td><a href="https://github.com/orgs/{{ project_info.github_org }}/repositories?q={{ project.name }}&type=all&language=&sort=">{{ project.name }}</a></td>
                                                     <td class="timestamp">{{ project.last_updated }}</td>
-                                                    <td><button class="refresh" data-project="{{ project.git_prefix }}">Refresh</button></td>
+                                                    <td><button class="refresh" data-project="{{ project.name }}">Refresh</button></td>
                                                 </tr>
                                             {% endfor %}
                                             </tbody>
@@ -32,6 +32,33 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-12 col-lg-12">
+                            <div class="card">
+                                <div class="card-header">Umatched projects</div>
+                                <div class="card-body">
+                                    <p class="card-title">Projects not backed up from <a href="https://github.com/orgs/{{ project_info.github_org }}/repositories">RAC</a></p>
+                                    <table id="unmatched_projects" class="datatable table table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th>Project</th>
+                                            <th>URL</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for project in unmatched %}
+                                        <tr>
+                                                <td>{{ project.name }}</td>
+                                                <td><a href="{{ project.clone_url }}">{{ project.clone_url }}</a></td>
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
 <script>
     $("button.refresh").on("click", function() {
         const project = $(this).data("project")
@@ -41,6 +68,8 @@
             }
         })
     })
+
+    let table = new DataTable('#unmatched_projects');
 
 </script>
 {% endblock %}

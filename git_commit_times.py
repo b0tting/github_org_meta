@@ -55,7 +55,7 @@ class CacheHandler:
 class GitCommitTimes:
     CONFIG_LOCK_BACKUP_TIME = 5
 
-    def __init__(self, repos_dir, fetch=False):
+    def __init__(self, repos_dir):
         self.repo_dir = repos_dir
         self.repo_list = self.get_repo_dirs(repos_dir)
         self.cache_handler = CacheHandler(repos_dir)
@@ -163,6 +163,23 @@ class GitCommitTimes:
             self.cache_handler.save_cache("get_number_commits", project, number_results)
             return number_results
 
+    def get_tagged_state(self, project) -> list:
+        cache = self.cache_handler.get_cache("get_tagged_state", project)
+        if cache:
+            return cache
+        else:
+            tag_results = []
+            for repo_url in self.repo_list:
+                if project in repo_url:
+                    repo = Repo(repo_url)
+                    tags = sorted(repo.tags, key=lambda t: t.commit.committed_datetime)
+                    name = repo_url.split("\\")[-1]
+                    if tags:
+                        tag_results.append({"name": name, "tag": tags[-1].name, "date": tags[-1].commit.committed_datetime})
+                    else:
+                        tag_results.append({"name": name, "tag": "No tags", "date": "No tags"})
+            self.cache_handler.save_cache("get_tagged_state", project, tag_results)
+            return tag_results
 
 if __name__ == "__main__":
     repo_dir = "D:\\drive\\aws\\werkplaats-3-rest-*"
