@@ -103,7 +103,6 @@
     function show_commit_times() {
         $.get("/get_commit_times/" + project_name, function (data, status) {
             const ctx = document.getElementById("commits_hours");
-            console.log(data)
             if (!canvas_map.commits_week) {
                 canvas_map.commits_week = new Chart(ctx, {
                     type: 'bar',

@@ -41,11 +41,11 @@ class GitRepoCloneAndPull:
 
     def unmatched_repos(self, repo_name_expression_list):
         result = []
+        compiled_expressions = [re.compile(repo_name_expression) for repo_name_expression in repo_name_expression_list]
         for repo in self.repo_list:
             matched = False
-            for repo_name_expression in repo_name_expression_list:
-                repo_expression = re.compile(repo_name_expression)
-                if repo_expression.match(repo.name):
+            for repo_name_expression in compiled_expressions:
+                if repo_name_expression.match(repo.name):
                     matched = True
                     break
             if not matched:

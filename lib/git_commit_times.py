@@ -1,4 +1,5 @@
 import glob
+import re
 import time
 
 from git import GitCommandError, InvalidGitRepositoryError, Repo
@@ -34,6 +35,8 @@ class GitCommitTimes:
                     raise e
             except IOError as e:
                 time.sleep(self.CONFIG_LOCK_BACKUP_TIME)
+        if not name:
+            name = re.split(r'[\\/]', repo_url)[-1]
         return name, commit_list
 
     def get_repo_dirs(self, glob_dir) -> list:
@@ -55,6 +58,7 @@ class GitCommitTimes:
             for repo_url in self.repo_list:
                 if project in repo_url:
                     week_results.append(self.get_week_number_commits(repo_url))
+            print(week_results)
             if week_results:
                 self.cache_handler.save_cache(
                     "get_commits_over_weeks", project, week_results
