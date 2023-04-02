@@ -18,7 +18,7 @@
                                                 <tbody>
                                                 {% for project in tags %}
                                                 <tr>
-                                                        <td>{{ project.name }}</td>
+                                                        <td><a href="{{ project.clone_url }}">{{ project.name }}</a></td>
                                                         <td>{{ project.tag }}</td>
                                                         <td>{{ project.date }}</td>
                                                 </tr>

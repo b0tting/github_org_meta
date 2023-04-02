@@ -1,10 +1,7 @@
-import traceback
-
 import yaml
 from flask import Flask, jsonify, render_template, request
 
-from get_clone_and_pull_rac import GitProjectInfo, GitRepoCloneAndPull
-from git_commit_times import GitCommitTimes
+from lib import GitCommitTimes, GitProjectInfo, GitRepoCloneAndPull
 
 app = Flask(__name__, static_url_path="/assets", static_folder="assets")
 settings = yaml.load(open("gitmeta.yml"), Loader=yaml.FullLoader)
@@ -23,6 +20,10 @@ grcap = GitRepoCloneAndPull(
 @app.route("/project/<string:project>")
 def get_project_page(project):
     tags = gct.get_tagged_state(project)
+    # ...this is not the way
+    for repo in tags:
+        repo["clone_url"] = gpi.get_clone_url(repo["name"], app.config["github_organization"])
+
     return render_template(
         "charts.html", project=project, projects=settings["projects"], tags=tags
     )
@@ -67,7 +68,7 @@ def get_project_info():
         "project_info.html",
         projects=settings["projects"],
         project_info=gpi.get_all_project_info(),
-        unmatched=grcap.unmatched_repos(project_expressions)
+        unmatched=grcap.unmatched_repos(project_expressions),
     )
 
 
@@ -103,7 +104,9 @@ def refresh_project(project):
         project_info = gpi.get_project_info(project)
         if not project_info:
             raise Exception(f"Error: project {project} not in project list")
-        update_timestamp = grcap.pull_to_dir(settings["git_repo_dir"], project_info["name"], project_info["expression"])
+        update_timestamp = grcap.pull_to_dir(
+            settings["git_repo_dir"], project_info["name"], project_info["expression"]
+        )
         update_date = gpi.convert_timestamp(update_timestamp)
         return {"result": "success", "update_date": update_date}
     except Exception as e:
