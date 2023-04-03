@@ -7,10 +7,11 @@ app = Flask(__name__, static_url_path="/assets", static_folder="assets")
 settings = yaml.load(open("gitmeta.yml"), Loader=yaml.FullLoader)
 for key, value in settings.items():
     app.config[key] = value
-gct = GitCommitTimes(app.config["git_repo_dir"])
+
 gpi = GitProjectInfo(
     settings["projects"], app.config["git_repo_dir"], app.config["github_organization"]
 )
+gct = GitCommitTimes(app.config["git_repo_dir"], gpi)
 grcap = GitRepoCloneAndPull(
     settings["github_access_token"],
     settings["github_organization"],
@@ -22,7 +23,9 @@ def get_project_page(project):
     tags = gct.get_tagged_state(project)
     # ...this is not the way
     for repo in tags:
-        repo["clone_url"] = gpi.get_clone_url(repo["name"], app.config["github_organization"])
+        repo["clone_url"] = gpi.get_clone_url(
+            repo["name"], app.config["github_organization"]
+        )
 
     return render_template(
         "charts.html", project=project, projects=settings["projects"], tags=tags
