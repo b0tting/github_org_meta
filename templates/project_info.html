@@ -21,8 +21,10 @@
                                                 <tr>
                                                     <th scope="row">{{ project.label }}</th>
                                                     <td><a href="https://github.com/orgs/{{ project_info.github_org }}/repositories?q={{ project.name }}&type=all&language=&sort=">{{ project.name }}</a></td>
-                                                    <td class="timestamp">{{ project.last_updated }}</td>
-                                                    <td><button class="refresh" data-project="{{ project.name }}">Refresh</button></td>
+                                                    <td class="timestamp">
+                                                        <span class="last_update">{{ project.last_updated }}</span>
+                                                    </td>
+                                                    <td><button class="refresh btn btn-primary" data-project="{{ project.name }}"><span class="spinner spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Refresh</button></td>
                                                 </tr>
                                             {% endfor %}
                                             </tbody>
@@ -60,9 +62,12 @@
                     </div>
 
 <script>
+    $(".spinner").hide();
     $("button.refresh").on("click", function() {
         const project = $(this).data("project")
-        $.get("/refresh_project/" + project, function (data, status) {
+        $(this).find(".spinner").show();
+        $.get("/refresh_project/" + project, (data) => {
+            $(this).find(".spinner").hide();
             if(data.update_date) {
                 $(this).parent().parent().find("td.timestamp").text(data.update_date)
             }

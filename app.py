@@ -20,12 +20,15 @@ grcap = GitRepoCloneAndPull(
 
 @app.route("/project/<string:project>")
 def get_project_page(project):
-    tags = gct.get_tagged_state(project)
-    # ...this is not the way
-    for repo in tags:
-        repo["clone_url"] = gpi.get_clone_url(
-            repo["name"], app.config["github_organization"]
-        )
+    try:
+        tags = gct.get_tagged_state(project)
+        # ...this is not the way
+        for repo in tags:
+            repo["clone_url"] = gpi.get_clone_url(
+                repo["name"], app.config["github_organization"]
+            )
+    except FileNotFoundError:
+        tags = []
 
     return render_template(
         "charts.html", project=project, projects=settings["projects"], tags=tags
