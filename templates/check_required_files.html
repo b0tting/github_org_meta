@@ -1,0 +1,49 @@
+                    <div class="row">
+                         <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">Required work</div>
+                                <div class="card-body">
+                                    <div class="inline-code">
+                                        <div>
+                                            <table id="required_files" class="datatable table table-striped">
+                                                <thead>
+                                                <tr>
+                                                    <th>name</th>
+                                                    <th>required_files</th>
+                                                    {% for file_exp in project_info.required_files %}<th>{{ file_exp }}</th>{% endfor %}]
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                </tr>
+                                                </tbody>
+                                        </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        $(document).ready(function() {
+                            $('#required_files').DataTable( {
+                                "order": [[ 0, "desc" ]],
+                                ajax: {
+                                    url: '/get_required_files/{{ project_info.name }}',
+                                    dataSrc: ''
+                                },
+                                columns: [
+                                    {
+                                        data: 'name',
+                                        render: function (data, type, row) {
+                                            return '<a href="{{ project_info.base_repo_url}}/' + data + '">' + data + '</a>';
+                                        }
+                                    },
+                                    { data: 'required_files' },
+                                    {% for file_exp in project_info.required_files %}{ data: '{{ file_exp }}' },
+                                    {% endfor %}
+                                ]
+
+                            } );
+                        } );
+                    </script>

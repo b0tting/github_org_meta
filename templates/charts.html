@@ -1,5 +1,8 @@
 {% extends "index.html" %}
 {% block content %}
+{% if project_info.required_files %}
+    {% include "check_required_files.html" %}
+{% endif %}
                     <div class="row">
                          <div class="col-md-12">
                             <div class="card">
@@ -16,11 +19,11 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                {% for project in tags %}
+                                                {% for repo in tags %}
                                                 <tr>
-                                                        <td><a href="{{ project.clone_url }}">{{ project.name }}</a></td>
-                                                        <td>{{ project.tag }}</td>
-                                                        <td>{{ project.date }}</td>
+                                                        <td><a href="{{ repo.clone_url }}">{{ repo.name }}</a></td>
+                                                        <td>{{ repo.tag }}</td>
+                                                        <td>{{ repo.date }}</td>
                                                 </tr>
                                                 {% endfor %}
                                                 </tbody>

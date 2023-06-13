@@ -30,8 +30,10 @@ def get_project_page(project):
     except FileNotFoundError:
         tags = []
 
+    project_info = gpi.get_project_info(project)
+    project_info["base_repo_url"] = gpi.get_clone_url(None, gpi.github_org)
     return render_template(
-        "charts.html", project=project, projects=settings["projects"], tags=tags
+        "charts.html", project=project, projects=settings["projects"], tags=tags, project_info=project_info
     )
 
 
@@ -51,10 +53,12 @@ def get_commit_weeks(project):
     chartjs_datasets = [
         {"label": repo["name"], "data": repo["week_brackets"]} for repo in result
     ]
-    labels = set([label for repo in result for label in repo["week_brackets"].keys()])
-    labels = list(labels)
-    labels.sort(key=lambda x: int(x))
-    result = {"data": chartjs_datasets, "labels": labels}
+    week_numbers = set(
+        [label for repo in result for label in repo["week_brackets"].keys()]
+    )
+    week_numbers = list(week_numbers)
+    week_numbers.sort(key=lambda x: int(x))
+    result = {"data": chartjs_datasets, "labels": week_numbers}
     return jsonify(result)
 
 
@@ -99,9 +103,10 @@ def list_repos(project):
     return jsonify(gpi.get_repos_for_project(project))
 
 
-@app.route("/get_commit_weeks/<string:project>/<string:repo>")
-def list_repo_commits(project):
-    raise NotImplementedError
+@app.route("/get_required_files/<string:project>")
+def get_required_files(project):
+    result = gct.get_got_required_files(project)
+    return jsonify(result)
 
 
 @app.route("/refresh_project/<string:project>")

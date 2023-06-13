@@ -33,6 +33,8 @@ class GitProjectInfo:
                     "name": project["name"],
                     "label": project["label"],
                     "last_updated": self.convert_timestamp(update_timestamp),
+                    "has_required_files": "required_files" in project and project["required_files"] is not None,
+                    "base_repo_url": "https://github.com/" + self.github_org
                 }
             )
         result["projects"] = project_list
@@ -50,4 +52,7 @@ class GitProjectInfo:
 
     @staticmethod
     def get_clone_url(project, github_org):
-        return f"https://github.com/{github_org}/{project}.git"
+        if project == None:
+            return f"https://github.com/{github_org}"
+        else:
+            return f"https://github.com/{github_org}/{project}.git"

@@ -41,7 +41,10 @@ class GitRepoCloneAndPull:
 
     def unmatched_repos(self, repo_name_expression_list):
         result = []
-        compiled_expressions = [re.compile(repo_name_expression) for repo_name_expression in repo_name_expression_list]
+        compiled_expressions = [
+            re.compile(repo_name_expression)
+            for repo_name_expression in repo_name_expression_list
+        ]
         for repo in self.repo_list:
             matched = False
             for repo_name_expression in compiled_expressions:
@@ -91,11 +94,15 @@ class GitRepoCloneAndPull:
             repo.git.checkout("main")
             repo.remotes.origin.pull()
         except git.exc.GitCommandError as e:
-            if not with_reset:
-                print(f"Error pulling {repo_meta.name}: {e} - trying reset")
-                self.pull_repo(repo, repo_meta, repo_dir, with_reset=True)
-            else:
-                print(f"Error pulling {repo_meta.name}: {e} - skipping")
+            try:
+                repo.git.checkout("master")
+                repo.remotes.origin.pull()
+            except git.exc.GitCommandError as e:
+                if not with_reset:
+                    print(f"Error pulling {repo_meta.name}: {e} - trying reset")
+                    self.pull_repo(repo, repo_meta, repo_dir, with_reset=True)
+                else:
+                    print(f"Error pulling {repo_meta.name}: {e} - skipping")
 
     def list_all_repos(self):
         g = Github(self.github_access_token)

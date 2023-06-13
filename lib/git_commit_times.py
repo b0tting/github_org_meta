@@ -1,4 +1,5 @@
 import glob
+import os
 import re
 import time
 
@@ -159,3 +160,37 @@ class GitCommitTimes:
                     )
             self.cache_handler.save_cache("get_tagged_state", project, tag_results)
             return tag_results
+
+    def get_got_required_files(self, project_name) -> list:
+        cache = self.cache_handler.get_cache("get_got_required_files", project_name)
+        if cache:
+            return cache
+        else:
+            project = self.git_project_info.get_project_info(project_name)
+            project_dir = os.path.join(self.repo_dir, project["name"])
+            required_files_results = []
+
+            regexes = {regex[0]: re.compile(regex[1]) for regex in project["required_files"].items()}
+            for name, repourl in self.get_filtered_repos(project_name):
+                project_repo_dir = os.path.join(project_dir, name)
+                current = {"name": name}
+                project_files = os.listdir(project_repo_dir)
+                for regex in regexes:
+                    current[regex] = False
+                    for project_file in project_files:
+                        if regexes[regex].match(project_file):
+                            current[regex] = True
+                            break
+
+                # Add completed results
+                required_count = 0
+                for regex in regexes:
+                    if current[regex]:
+                        required_count += 1
+                current["required_files"] = required_count
+
+                required_files_results.append(current)
+            self.cache_handler.save_cache(
+                "get_tagged_state", project_name, required_files_results
+            )
+            return required_files_results
