@@ -9,13 +9,11 @@ for key, value in settings.items():
     app.config[key] = value
 
 gpi = GitProjectInfo(
-    settings["projects"], app.config["git_repo_dir"], app.config["github_organization"]
+    settings["projects"],
+    settings["git_repo_dir"],
+    settings["github_organization"]
 )
 gct = GitCommitTimes(app.config["git_repo_dir"], gpi)
-grcap = GitRepoCloneAndPull(
-    settings["github_access_token"],
-    settings["github_organization"],
-)
 
 
 @app.route("/project/<string:project>")
@@ -33,7 +31,11 @@ def get_project_page(project):
     project_info = gpi.get_project_info(project)
     project_info["base_repo_url"] = gpi.get_clone_url(None, gpi.github_org)
     return render_template(
-        "charts.html", project=project, projects=settings["projects"], tags=tags, project_info=project_info
+        "charts.html",
+        project=project,
+        projects=settings["projects"],
+        tags=tags,
+        project_info=project_info,
     )
 
 

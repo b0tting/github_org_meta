@@ -1,0 +1,77 @@
+github_issues:
+  - name: "notities"
+    title: "Notities opslaan"
+    body: |
+      Het belangrijkste component van onze applicatie is het opslaan van notities. We willen dat een docent een stuk tekst kan opslaan. Dat kan een stuk tekst zijn dat hij zelf heeft geschreven, of een stuk tekst dat hij ergens heeft gevonden.
+
+      Een notitie heeft:
+      - Een (optionele) *titel*. Is er geen titel, dan gebruiken we de eerste 20 woorden van de notitie als titel.
+      - Een *bron*. Dit is de bron van de notitie. Bijvoorbeeld een URL verwijzend naar een website, een boek, een website of een artikel.
+      - Een *categorie*. Dit is een categorie die de docent zelf kan kiezen. Bijvoorbeeld "Wiskunde", "Geschiedenis" of "Biologie". Liefst willen we meerdere categorieën kunnen kiezen.
+      - Een optie *"Publiek beschikbaar"* die standaard actief is. Als deze optie aan staat, dan kunnen andere docenten de notitie ook zien. Als deze optie uit staat, dan is de notitie alleen zichtbaar voor de docent die hem heeft opgeslagen.
+      - Een *aanmaakdatum*. Dit is de datum waarop de notitie is aangemaakt. Datums zijn moeilijke dingen om mee te werken, de datum is niet wijzigbaar, maar we willen dat die wel wordt getoond bij een notitie, in "jaar - maand - dag uur:minuut" formaat.
+      - De naam van de *docent* die de notitie heeft opgeslagen. Dit is de docent die is ingelogd.
+      - Natuurlijk de *tekst* van de notitie zelf.
+
+      - [ ] Maak een HTML formulier om een nieuw notitie op te slaan. Het formulier moet de docent de mogelijkheid geven om alle velden in te vullen.
+      - [ ] Maak een HTML formulier om een opgeslagen notitie te tonen.
+      - [ ] Maak een route om nieuwe notities op te slaan. De route moet de notitie opslaan in de database. De route moet de docent doorsturen naar de route die de notitie laat zien.
+      - [ ] Maak een route om een notitie te wijzigen. De route moet de notitie opslaan in de database. De route moet de docent doorsturen naar de route die de notitie laat zien.
+  - name: "notitie_lijst"
+    title: "Notities doorzoeken"
+    body: |
+      Docenten die de applicatie openen willen we in eerste instantie hun eigen notities laten zien. Dat zijn de notities die ze zelf hebben opgeslagen. Ze moeten die kunnen openen, verwijderen en bewerken. Daarnaast willen we de lijst kunnen filteren op zoekwoorden, per categorie en willen we de optie "Van alle docenten" kunnen toevoegen.
+
+      - [ ] Maak een route om een notitie te wijzigen. De route moet de notitie opslaan in de database. De route moet de docent doorsturen naar de route die de notitie laat zien.
+      - [ ] Maak een HTML formulier om alle notities te tonen
+      - [ ] Maak een route om alle notities te tonen. De route moet de docent de mogelijkheid geven om de notities te openen en bewerken.
+      - [ ] Maak een route om notities te verwijderen. Voeg de mogelijkheid om routes te verwijderen toe aan het formulier die alle notities laat zien.
+      - [ ] Breid de HTML uit met een zoekscherm. Maak een route om de notities op inhoud of titel te filteren op de inhoud van dit zoekveld.
+      - [ ] Breid de HTML uit met een categorieën filter. Maak een route om de notities op categorie te filteren op de inhoud van dit zoekveld.
+      - [ ] Breid de HTML uit met een "Van alle docenten" optie. Maak een route om de notities van alle docenten te tonen.
+      - [ ] Breid de HTML uit met paginering - toon 20 notities per pagina. Maak een route om de notities per pagina te tonen.
+  - name: "paginering_lijst"
+    title: "Notities paginering"
+    body: |
+      De lijst met notities willen we splitsen in pagina's. Er mogen hooguit 20 notities per pagina getoond worden. De docent moet door de pagina's kunnen bladeren. De docent moet kunnen zien op welke pagina hij zich bevindt. De docent moet kunnen zien hoeveel pagina's er zijn. De docent moet kunnen zien hoeveel notities er in totaal zijn.
+
+      - [ ] Breid de HTML uit met paginering - toon 20 notities per pagina. Maak een route om de notities per pagina te tonen.
+      - [ ] Breid de route naar de lijst uit met parameters om de betreffende pagina te tonen.
+  - name: "style"
+    title: "Stijl en opmaak"
+    body: |
+      Test-correct heeft een huisstijl, met een exact kleurenpalet en lettertype. We willen dat je deze huisstijl gebruikt, maar we hebben deze niet meegekregen van de opdrachtgever, je zult dus zelf een stylesheet moeten maken (of deels kopiëren) zoals op https://www.test-correct.nl/welcome.
+  - name: "questions"
+    title: "Vragen genereren"
+    body: |
+      Onder een notitie willen we de optie hebben om één of meerdere open vragen te genereren. We willen dat de web applicatie daarop de vraag genereert en dat je het resultaat laat zien, wijzigbaar voor de docent. Zie ook het kopje "ChatGPT" voor meer uitleg over de bron van de vraag.
+
+      De docent kan de gegenereerde vragen wijzigen en opslaan. Indien er al een vraag is gegenereerd voor een notitie moet die meteen getoond worden bij de notitie en gewijzigd kunnen worden als men de notitie wijzigt. We willen een optie hebben om vragen bij een notitie te verwijderen.
+
+      Ook moet de filter optie van de lijst worden uitgebreid met een "Met vragen" aan/uit optie.
+  - name: "exporteren"
+    title: "Exporteren"
+    body: |
+      Onderaan een notitie en onderaan een (gefilterde) lijst zouden we liefst ook een knop met "CSV export" willen hebben. Zie het kopje "CSV" voor meer details.
+
+      Vanuit een notitie moet de docent de vragen kunnen exporteren naar Test-Correct. Dit is slechts de opzet, dus voor nu willen we dat de vraag geëxporteerd kan worden in CSV formaat. Zie het kopje "CSV" voor meer uitleg.
+  - name: "login"
+    title: "Login"
+    body: |
+      Om de notities te kunnen organiseren willen we dat docenten alleen de eigen notities kunnen zien. De meest gebruikelijke oplossing is door een login te maken, met een wachtwoord. Er zal dan ook een admin account of rol moeten komen die nieuwe gebruikers kan aanmaken, bekijken en verwijderen en alle notities kan bekijken. Bij een notitie willen we dus ook kunnen terug zien wie de notitie heeft gemaakt.
+  - name: "ui_verbeteringen"
+    title: "Gebruiksgemak notities"
+    body: |
+      De eerste requirement stelt dat we notities kunnen opslaan, maar dit is heel basaal. We moeten het docenten zo gemakkelijk mogelijk maken om notities op te slaan. We hebben een aantal verbeteringen bedacht:
+      - Waarschijnlijk zijn docenten bezig met één vak / categorie tegelijk. We willen dat standaard de laatst gebruikte categorie wordt ingeguld in nieuwe notities
+      - Het zou ook mooi zijn als we meerdere categoriën kunnen toekennen aan een notitie.
+      - De URL zou bij bekijken van een notitie klikbaar moeten zijn
+      Gebruikgemak is belangrijk, probeer je in te leven in de docenten die de applicatie gaan gebruiken. Andere verbeteringen zijn welkom en zouden onder deze requirement kunnen vallen.
+  - name: "multiple_choice"
+    title: "Multiple choice vragen"
+    body: |
+      We hebben gesteld dat we open vragen willen hebben, maar we zouden ook graag een optie willen hebben om multiple choice vragen te genereren.
+  - name: "opslaan_antwoorden"
+    title: "Antwoorden opslaan"
+    body: |
+      Wat ook mooi zou zijn is als we de vragen die we gegenereerd hebben terug aanbieden aan ChatGPT en meteen een antwoord laten genereren. Dat antwoord zou dan ook opgeslagen kunnen worden bij de vraag.

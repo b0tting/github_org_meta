@@ -1,16 +1,16 @@
 import os
 import pickle
 
-from lib import GitRepoCloneAndPull
+from lib import GitProject
 
 
 class GitCacheHandler:
     def __init__(self, repo_dir):
         self.repo_dir = repo_dir
 
-    def cache_refresh_required(self, cache_file, project):
-        project_dir = os.path.join(self.repo_dir, project)
-        last_update_mtime = GitRepoCloneAndPull.get_last_updated_time(project_dir)
+    def cache_refresh_required(self, cache_file, project: GitProject):
+        repo_sync = project.repo_sync_time
+        last_update_mtime = repo_sync.get_last_updated_time()
         cache_file_mtime = (
             os.stat(cache_file).st_mtime if os.path.exists(cache_file) else None
         )

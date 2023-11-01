@@ -1,58 +1,39 @@
-import datetime
-import os
-
-from lib import GitRepoCloneAndPull
+from lib.git_project import GitProject
+from lib.github_handler import GitHubHandler
 
 
 class GitProjectInfo:
-    def __init__(self, projects, basedir, github_org):
-        self.projects = projects
-        self.basedir = basedir
-        self.github_org = github_org
+    def __init__(self, project_settings, cache_dir, github_handler: GitHubHandler):
+        self.project_settings = project_settings
+        self.basedir = cache_dir
+        self.github_handler = github_handler
+        self.projects = self.init_projects()
 
-    @staticmethod
-    def convert_timestamp(timestamp):
-        if timestamp:
-            return datetime.datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M")
-        else:
-            return "Never"
-
-    def get_project_info(self, project):
-        for project_info in self.projects:
-            if project_info["name"] == project:
-                return project_info
-        return None
-
-    def get_all_project_info(self):
-        result = {"github_org": self.github_org, "projects": ""}
-        project_list = []
-        for project in self.projects:
-            update_timestamp = self.get_updated_time(project["name"])
-            project_list.append(
-                {
-                    "name": project["name"],
-                    "label": project["label"],
-                    "last_updated": self.convert_timestamp(update_timestamp),
-                    "has_required_files": "required_files" in project and project["required_files"] is not None,
-                    "base_repo_url": "https://github.com/" + self.github_org
-                }
+    def init_projects(self):
+        projects = []
+        for project_setting in self.project_settings:
+            projects.append(
+                GitProject(
+                    name=project_setting["name"],
+                    label=project_setting["label"],
+                    expression=project_setting["expression"],
+                    required_files=project_setting["required_files"],
+                    github_org=self.github_handler.github_org,
+                    base_dir=self.basedir,
+                )
             )
-        result["projects"] = project_list
-        return result
+        return projects
 
-    def get_updated_time(self, project):
-        return GitRepoCloneAndPull.get_last_updated_time(
-            os.path.join(self.basedir, project)
-        )
+    def get_project_info(self, project_name):
+        for project in self.projects:
+            if project.name == project_name:
+                return project
+        raise Exception(f"Project {project_name} not found")
+
+    def get_all_projects(self):
+        return self.projects
 
     def get_unmatched_repos(self, gcap):
-        repo_expressions = [project["expression"] for project in self.projects]
-        repo_list = gcap.unmatched_repos(repo_expressions)
+        repo_expressions = [project.expression for project in self.projects]
+        repo_list = self.github_handler.unmatched_repos(repo_expressions)
         return repo_list
-
-    @staticmethod
-    def get_clone_url(project, github_org):
-        if project == None:
-            return f"https://github.com/{github_org}"
-        else:
-            return f"https://github.com/{github_org}/{project}.git"
