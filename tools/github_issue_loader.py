@@ -1,9 +1,12 @@
 # This tool is used to load issues from a CSV file into the Github repositories
 import re
+import time
+from datetime import datetime
 from pathlib import Path
 
+import github
 import yaml
-from github import Github, Auth
+from github import Github, Auth, GithubException
 
 
 class RepoRetriever:
@@ -78,11 +81,58 @@ class IssueLoader:
 
     def create_issues_on_repo(self, repo):
         for issue in self.issues:
-            self.__create_issue_on_repo(issue, repo)
+            done = False
+            while not done:
+                try:
+                    self.__create_issue_on_repo(issue, repo)
+                    done = True
+                except GithubException as e:
+                    if "rate limit" in str(e):
+                        print("Rate limit reached, waiting 1 minute")
+                        time.sleep(60)
+                    else:
+                        done = True
+                        raise e
+
+    def create_milestone_on_repo(self, repo, milestone_name, due_on=None):
+        print(f"Creating milestone {milestone_name} on repo {repo.name}")
+        done = False
+        try:
+            if due_on:
+                repo.create_milestone(title=milestone_name, due_on=due_on)
+            else:
+                repo.create_milestone(title=milestone_name)
+            done = True
+        except GithubException as e:
+            if "rate limit" in str(e):
+                print("Rate limit reached, waiting 1 minute")
+                time.sleep(60)
+            elif "already_exists" in str(e):
+                print(f"Milestone {milestone_name} already exists, skipping")
+                done = True
+            else:
+                done = True
+                raise e
+
+    def create_milestones_on_repos(self, repos, milestone_name, due_on=None):
+        for repo in repos:
+            self.create_milestone_on_repo(repo, milestone_name, due_on)
 
 
 repore = RepoRetriever()
-# repos = repro.get_matching_repos("wp2-2023-pygame")
-myrepo = repore.get_single_repo("passworder_github_test")
+repos = repore.get_matching_repos("wp2-2023-mvc")
+# myrepo = repore.get_single_repo("wp2-2023-starter")
 issue_loader = IssueLoader("wp2-issues.yaml")
-issue_loader.create_issue_on_repo(repo=myrepo, issue_name="notities")
+issue_loader.create_issues_on_repos(repos)
+issue_loader.create_milestones_on_repos(
+    repos=repos, milestone_name="Sprint 1", due_on=datetime(2023, 11, 22)
+)
+issue_loader.create_milestones_on_repos(
+    repos=repos, milestone_name="Sprint 2", due_on=datetime(2023, 12, 6)
+)
+issue_loader.create_milestones_on_repos(
+    repos=repos, milestone_name="Sprint 3", due_on=datetime(2023, 12, 20)
+)
+issue_loader.create_milestones_on_repos(
+    repos=repos, milestone_name="Sprint 4", due_on=datetime(2024, 1, 12)
+)

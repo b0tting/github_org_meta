@@ -7,21 +7,25 @@ github_issues:
       Een notitie heeft:
       - Een (optionele) *titel*. Is er geen titel, dan gebruiken we de eerste 20 woorden van de notitie als titel.
       - Een *bron*. Dit is de bron van de notitie. Bijvoorbeeld een URL verwijzend naar een website, een boek, een website of een artikel.
-      - Een *categorie*. Dit is een categorie die de docent zelf kan kiezen. Bijvoorbeeld "Wiskunde", "Geschiedenis" of "Biologie". Liefst willen we meerdere categorieën kunnen kiezen.
+      - Een *categorie*. Dit is een categorie die de docent uit een lijstje kan kiezen. Bijvoorbeeld "Wiskunde", "Geschiedenis" of "Biologie". Een docent mag zelf categorieën toevoegen of de naam wijzigen in deze lijst.
       - Een optie *"Publiek beschikbaar"* die standaard actief is. Als deze optie aan staat, dan kunnen andere docenten de notitie ook zien. Als deze optie uit staat, dan is de notitie alleen zichtbaar voor de docent die hem heeft opgeslagen.
       - Een *aanmaakdatum*. Dit is de datum waarop de notitie is aangemaakt. Datums zijn moeilijke dingen om mee te werken, de datum is niet wijzigbaar, maar we willen dat die wel wordt getoond bij een notitie, in "jaar - maand - dag uur:minuut" formaat.
-      - De naam van de *docent* die de notitie heeft opgeslagen. Dit is de docent die is ingelogd.
       - Natuurlijk de *tekst* van de notitie zelf.
 
-      - [ ] Maak een HTML formulier om een nieuw notitie op te slaan. Het formulier moet de docent de mogelijkheid geven om alle velden in te vullen.
+      Het invullen van een notitie moet zo gemakkelijk mogelijk zijn. De categorie zou bijvoorbeeld het beste een opzoeklijst kunnen zijn, en dan met voorkeur al gevuld met de laatst gebruikte. Dat zou ook betekenen dat je (ergens anders) een CRUD scherm moet hebben voor categorieën.
+
+      - [ ] Maak een HTML formulier om een nieuwe notitie mee aan te maken. Het formulier moet de docent de mogelijkheid geven om alle velden in te vullen.
       - [ ] Maak een HTML formulier om een opgeslagen notitie te tonen.
       - [ ] Maak een route om nieuwe notities op te slaan. De route moet de notitie opslaan in de database. De route moet de docent doorsturen naar de route die de notitie laat zien.
       - [ ] Maak een route om een notitie te wijzigen. De route moet de notitie opslaan in de database. De route moet de docent doorsturen naar de route die de notitie laat zien.
+      - [ ] Maak een nieuwe story om de lijst met categoriën te beheren. Daar moet CRUD voor komen.
+      - [ ] Maak een nieuwe story om de lijst met categoriën te beheren. Daar moet CRUD voor komen.
   - name: "notitie_lijst"
     title: "Notities doorzoeken"
     body: |
-      Docenten die de applicatie openen willen we in eerste instantie hun eigen notities laten zien. Dat zijn de notities die ze zelf hebben opgeslagen. Ze moeten die kunnen openen, verwijderen en bewerken. Daarnaast willen we de lijst kunnen filteren op zoekwoorden, per categorie en willen we de optie "Van alle docenten" kunnen toevoegen.
+      Docenten die de applicatie openen willen we in eerste instantie hun eigen notities laten zien, in pagina's van 20. Ze moeten vanuit daar de notities kunnen openen, verwijderen en bewerken. Daarnaast willen we de lijst kunnen filteren op zoekwoorden, per categorie en willen we de optie "Van alle docenten" kunnen toevoegen.
 
+      - [X] Maak een aparte story voor het toevoegen van paginering
       - [ ] Maak een route om een notitie te wijzigen. De route moet de notitie opslaan in de database. De route moet de docent doorsturen naar de route die de notitie laat zien.
       - [ ] Maak een HTML formulier om alle notities te tonen
       - [ ] Maak een route om alle notities te tonen. De route moet de docent de mogelijkheid geven om de notities te openen en bewerken.
@@ -29,7 +33,6 @@ github_issues:
       - [ ] Breid de HTML uit met een zoekscherm. Maak een route om de notities op inhoud of titel te filteren op de inhoud van dit zoekveld.
       - [ ] Breid de HTML uit met een categorieën filter. Maak een route om de notities op categorie te filteren op de inhoud van dit zoekveld.
       - [ ] Breid de HTML uit met een "Van alle docenten" optie. Maak een route om de notities van alle docenten te tonen.
-      - [ ] Breid de HTML uit met paginering - toon 20 notities per pagina. Maak een route om de notities per pagina te tonen.
   - name: "paginering_lijst"
     title: "Notities paginering"
     body: |
@@ -40,7 +43,7 @@ github_issues:
   - name: "style"
     title: "Stijl en opmaak"
     body: |
-      Test-correct heeft een huisstijl, met een exact kleurenpalet en lettertype. We willen dat je deze huisstijl gebruikt, maar we hebben deze niet meegekregen van de opdrachtgever, je zult dus zelf een stylesheet moeten maken (of deels kopiëren) zoals op https://www.test-correct.nl/welcome.
+      Test-correct heeft een huisstijl, met een exact kleurenpalet en lettertype. We willen dat je deze huisstijl gebruikt, maar we hebben deze niet meegekregen van de opdrachtgever, je zult dus zelf een stylesheet moeten maken (of deels kopiëren). Je kunt je laten inspireren door https://www.test-correct.nl/welcome.
   - name: "questions"
     title: "Vragen genereren"
     body: |
@@ -63,10 +66,9 @@ github_issues:
     title: "Gebruiksgemak notities"
     body: |
       De eerste requirement stelt dat we notities kunnen opslaan, maar dit is heel basaal. We moeten het docenten zo gemakkelijk mogelijk maken om notities op te slaan. We hebben een aantal verbeteringen bedacht:
-      - Waarschijnlijk zijn docenten bezig met één vak / categorie tegelijk. We willen dat standaard de laatst gebruikte categorie wordt ingeguld in nieuwe notities
-      - Het zou ook mooi zijn als we meerdere categoriën kunnen toekennen aan een notitie.
+      - Waarschijnlijk zijn docenten bezig met één vak / categorie tegelijk. We willen dat als eerst de laatst gebruikte categorie van een docent wordt geselecteerd in nieuwe notities.
+      - Het zou ook mooi zijn als we meerdere categorieën kunnen toekennen aan een notitie.
       - De URL zou bij bekijken van een notitie klikbaar moeten zijn
-      Gebruikgemak is belangrijk, probeer je in te leven in de docenten die de applicatie gaan gebruiken. Andere verbeteringen zijn welkom en zouden onder deze requirement kunnen vallen.
   - name: "multiple_choice"
     title: "Multiple choice vragen"
     body: |
